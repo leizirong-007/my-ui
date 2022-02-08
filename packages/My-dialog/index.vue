@@ -214,12 +214,16 @@ export default {
   },
   methods: {
     //初始化位置
-    initializePosition() {
+    initializePosition(banOffset) {
       let dialogWrap = this.$refs['my-dialog--wrap--container'];
       let getRndInteger = (min, max) => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
       }
       let stochasticX = getRndInteger(-20, 50), stochasticY = getRndInteger(-20, 50)
+      if (banOffset) {
+        stochasticX = 0
+        stochasticY = 0
+      }
       dialogWrap.style.left = window.innerWidth - (window.innerWidth / 2) - (this.width / 2) + stochasticX + "px";
       dialogWrap.style.top = window.innerHeight - (window.innerHeight / 2) - (this.height / 2) + stochasticY + "px";
       this.isFullScreen = false;
@@ -277,7 +281,7 @@ export default {
         let innerSL = window.innerWidth, innerST = window.innerHeight
         if (SL !== innerSL || ST !== innerST) {
           if (!this.isFullScreen) {
-            this.initializePosition()
+            this.initializePosition(true)
           }
         }
         SL = innerSL, ST = innerST
