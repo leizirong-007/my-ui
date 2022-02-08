@@ -1,0 +1,44 @@
+{
+  "id": "3063428",
+  "name": "myui",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "755543",
+      "name": "固定",
+      "font_class": "guding",
+      "unicode": "e625",
+      "unicode_decimal": 58917
+    },
+    {
+      "icon_id": "1392554",
+      "name": "关闭",
+      "font_class": "guanbi",
+      "unicode": "e665",
+      "unicode_decimal": 58981
+    },
+    {
+      "icon_id": "11490920",
+      "name": "最大化",
+      "font_class": "zuidahua",
+      "unicode": "e651",
+      "unicode_decimal": 58961
+    },
+    {
+      "icon_id": "19911843",
+      "name": "最大化",
+      "font_class": "zuidahua-1",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "941656",
+      "name": "最小化",
+      "font_class": "zuixiaohua",
+      "unicode": "e629",
+      "unicode_decimal": 58921
+    }
+  ]
+}
