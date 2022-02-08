@@ -10,10 +10,10 @@
         :class="positionKeep ? 'positionKeep--open' : 'positionKeep--close'"
         @click="positionKeep = !positionKeep"
       >
-        <i class="iconfont icon-guding"></i>
+        <i class="my-ui-x-iconfont icon-guding"></i>
       </button>
       <button @click="closeManager">
-        <i class="iconfont icon-guanbi"></i>
+        <i class="my-ui-x-iconfont icon-guanbi"></i>
       </button>
     </div>
     <ul class="my-dialog--manager--body">
@@ -24,7 +24,7 @@
         :key="item.__vId"
       >
         {{ item.title }}
-        <span @click.stop="closeDialog(item.__vId)" class="iconfont icon-guanbi"></span>
+        <span @click.stop="closeDialog(item.__vId)" class="my-ui-x-iconfont icon-guanbi"></span>
       </li>
     </ul>
   </div>

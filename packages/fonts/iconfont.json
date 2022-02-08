@@ -1,7 +1,7 @@
 {
   "id": "3063428",
   "name": "myui",
-  "font_family": "iconfont",
+  "font_family": "my-ui-x-iconfont",
   "css_prefix_text": "icon-",
   "description": "",
   "glyphs": [

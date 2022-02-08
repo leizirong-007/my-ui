@@ -1,5 +1,7 @@
 import MyDialig from './My-dialog/index'
-
+import '../packages/fonts/iconfont.css'
+import '../packages/style/base.css'
+import '../packages/style/common.css'
 
 
 const components = [
