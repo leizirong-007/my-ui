@@ -202,7 +202,7 @@ export default {
       if (!this.shade) {
         return "my-dialog--shade-none";
       }
-      return ''
+      return 'my-dialog--shade'
     },
     //动态选择阴影模式
     dialogShaow() {
