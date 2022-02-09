@@ -129,8 +129,8 @@ export default {
     initializePosition() {
       let dialogManager = document.querySelector(".my-dialog--manager");
       dialogManager.style.position = "fixed";
-      dialogManager.style.top = "60px";
-      dialogManager.style.left = window.innerWidth - parseInt(dialogManager.style.width) - 85 + "px";
+      dialogManager.style.top = "50px";
+      dialogManager.style.left = window.innerWidth - parseInt(dialogManager.style.width) - 120 + "px";
     },
     // 插入到body
     appendToWrap() {
@@ -230,8 +230,8 @@ export default {
     }
     .positionKeep--open {
       display: flex;
-      background-color: skyblue;
-      border-color: skyblue;
+      background-color: #b2c4fc;
+      border-color: #b2c4fc;
     }
     button {
       background-color: transparent;
@@ -245,8 +245,8 @@ export default {
       align-items: center;
       border-radius: 50%;
       &:hover {
-        background-color: skyblue;
-        border-color: skyblue;
+        background-color: #b2c4fc;
+        border-color: #b2c4fc;
       }
       i {
         font-size: 12px;
@@ -255,12 +255,12 @@ export default {
         align-items: center;
         width: 100%;
         height: 100%;
-        transform: scale(0.7);
+        transform: scale(0.9);
       }
     }
   }
   &--body {
-    background-color: #353b43;
+    background-color: #fff;
     height: 170px;
     padding: 0 2px;
     overflow: hidden;
@@ -298,7 +298,7 @@ export default {
         position: absolute;
         right: 0;
         top: 50%;
-        transform: translateY(-50%) scale(0.6);
+        transform: translateY(-50%) scale(0.8);
         width: 20px;
         height: 20px;
         text-align: center;

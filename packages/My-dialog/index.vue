@@ -38,16 +38,22 @@
           >
             <span class="my-dialog--header--titile">{{ title }}</span>
             <button
+              class="my-ui-x-iconfont icon-zuixiaohua"
               @click="minimalityHandle"
               v-show="minimality"
               @mousedown.stop="toStratosphere"
-            >最小化</button>
+            ></button>
             <button
+              :class="['my-ui-x-iconfont', isFullScreen ? 'icon-zuidahua-1' : 'icon-zuidahua']"
               @click="isFullScreen = !isFullScreen"
               v-show="fullScreen"
               @mousedown.stop="toStratosphere"
-            >{{ isFullScreen ? '还原' : '最大化' }}</button>
-            <button @mousedown.stop="toStratosphere" @click="$emit('update:visible', false)">关闭</button>
+            ></button>
+            <button
+              class="my-ui-x-iconfont icon-guanbi"
+              @mousedown.stop="toStratosphere"
+              @click="$emit('update:visible', false)"
+            ></button>
           </div>
           <div class="my-dialog--body">
             <!-- 默认插槽 -->

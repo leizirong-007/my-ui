@@ -1,13 +1,13 @@
 @font-face {
   font-family: "my-ui-x-iconfont"; /* Project id 3063428 */
-  src: url('iconfont.woff2?t=1644290251343') format('woff2'),
-       url('iconfont.woff?t=1644290251343') format('woff'),
-       url('iconfont.ttf?t=1644290251343') format('truetype');
+  src: url('iconfont.woff2?t=1644399415426') format('woff2'),
+       url('iconfont.woff?t=1644399415426') format('woff'),
+       url('iconfont.ttf?t=1644399415426') format('truetype');
 }
 
-.my-ui-x-iconfont {
+.my-ui-x-iconfont{
   font-family: "my-ui-x-iconfont" !important;
-  font-size: 16px;
+  font-size: inherit;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

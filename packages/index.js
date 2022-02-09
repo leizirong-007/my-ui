@@ -1,11 +1,15 @@
 import MyDialig from './My-dialog/index'
-import '../packages/fonts/iconfont.css'
-import '../packages/style/base.css'
-import '../packages/style/common.css'
+import MyButton from './My-button/index'
+import MyInput from './My-input/index'
+import './fonts/iconfont.css'
+import './style/base.css'
+import './style/joyfulCss.css'
 
 
 const components = [
-  MyDialig
+  MyDialig,
+  MyButton,
+  MyInput,
 ]
 
 const install = function (Vue) {
