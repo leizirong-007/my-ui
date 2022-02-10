@@ -14,18 +14,77 @@
         style="padding: 20px;"
       >shade shift height width shadow fullScreen minimality resetPostion appendToBody title touchDetection windowMonitor</div>
     </my-dialog>
+    <my-dialog title="asdfasdfsdfsadfsdfsa" :visible.sync="visible1" shift minimality>
+      <div
+        style="padding: 20px;"
+      >shade shift height width shadow fullScreen minimality resetPostion appendToBody title touchDetection windowMonitor</div>
+    </my-dialog>
+    <my-dialog title="asdfasdfsdfsadfsdfsa" :visible.sync="visible2" shift minimality>
+      <div
+        style="padding: 20px;"
+      >shade shift height width shadow fullScreen minimality resetPostion appendToBody title touchDetection windowMonitor</div>
+    </my-dialog>
+    <my-dialog title="asdfasdfsdfsadfsdfsa" :visible.sync="visible3" shift minimality>
+      <div
+        style="padding: 20px;"
+      >shade shift height width shadow fullScreen minimality resetPostion appendToBody title touchDetection windowMonitor</div>
+    </my-dialog>
+    <my-dialog title="asdfasdfsdfsadfsdfsa" :visible.sync="visible4" shift minimality>
+      <div
+        style="padding: 20px;"
+      >shade shift height width shadow fullScreen minimality resetPostion appendToBody title touchDetection windowMonitor</div>
+    </my-dialog>
+    <my-dialog title="asdfasdfsdfsadfsdfsa" :visible.sync="visible5" shift minimality>
+      <div
+        style="padding: 20px;"
+      >shade shift height width shadow fullScreen minimality resetPostion appendToBody title touchDetection windowMonitor</div>
+    </my-dialog>
+    <my-dialog title="asdfasdfsdfsadfsdfsa" :visible.sync="visible6" shift minimality>
+      <div
+        style="padding: 20px;"
+      >shade shift height width shadow fullScreen minimality resetPostion appendToBody title touchDetection windowMonitor</div>
+    </my-dialog>
+    <my-dialog title="asdfasdfsdfsadfsdfsa" :visible.sync="visible7" shift minimality>
+      <div
+        style="padding: 20px;"
+      >shade shift height width shadow fullScreen minimality resetPostion appendToBody title touchDetection windowMonitor</div>
+    </my-dialog>
+    <my-dialog title="asdfasdfsdfsadfsdfsa" :visible.sync="visible8" shift minimality>
+      <div
+        style="padding: 20px;"
+      >shade shift height width shadow fullScreen minimality resetPostion appendToBody title touchDetection windowMonitor</div>
+    </my-dialog>
 
     <div class="dome">
-      <my-button disabled @click="visible = !visible" iconLeft="my-ui-x-iconfont icon-guding">按钮</my-button>
-      <my-button @click="visible = !visible" iconMiddle="my-ui-x-iconfont icon-guding"></my-button>
+      <my-button disabled @click="visible = !visible" iconLeft="my-ui-x-iconfont icon-guding">禁用</my-button>
+      <my-button type="text">
+        <span class="my-ui-x-iconfont icon-guding">a</span>
+      </my-button>
       <my-button
         class="btn-primary"
         @click="visible = !visible"
         iconRight="my-ui-x-iconfont icon-guding"
       >按钮</my-button>
+
+      <my-button @click="visible1 = !visible1" iconLeft="my-ui-x-iconfont icon-guding">点击打开一个弹窗</my-button>
+      <my-button @click="visible2 = !visible2" iconLeft="my-ui-x-iconfont icon-guding">点击打开一个弹窗</my-button>
+      <my-button @click="visible3 = !visible3" iconLeft="my-ui-x-iconfont icon-guding">点击打开一个弹窗</my-button>
+      <my-button @click="visible4 = !visible4" iconLeft="my-ui-x-iconfont icon-guding">点击打开一个弹窗</my-button>
+      <my-button @click="visible5 = !visible5" iconLeft="my-ui-x-iconfont icon-guding">点击打开一个弹窗</my-button>
+      <my-button @click="visible6 = !visible6" iconLeft="my-ui-x-iconfont icon-guding">点击打开一个弹窗</my-button>
+      <my-button @click="visible7 = !visible7" iconLeft="my-ui-x-iconfont icon-guding">点击打开一个弹窗</my-button>
+      <my-button @click="visible8 = !visible8" iconLeft="my-ui-x-iconfont icon-guding">点击打开一个弹窗</my-button>
     </div>
     <div class="dome">
-      <my-input disabled iconRight="my-ui-x-iconfont icon-guding"></my-input>
+      <my-input disabled icon-right="my-ui-x-iconfont icon-guding"></my-input>
+      <my-input v-model="value" type="password" iconRight="my-ui-x-iconfont icon-guding"></my-input>
+      <my-input type="password" v-model="value" clearable iconLeft="my-ui-x-iconfont icon-guding"></my-input>
+      <my-input
+        v-model="value"
+        type="password"
+        show-password
+        iconLeft="my-ui-x-iconfont icon-guding"
+      ></my-input>
       <my-input
         v-model="value"
         @input="test"
@@ -34,6 +93,35 @@
         placeholder="请输入你的名字"
       ></my-input>
       <my-input v-model="value" class="ipt-primary" iconRight="my-ui-x-iconfont icon-guding"></my-input>
+      <my-input
+        type="password"
+        v-model="value"
+        placeholder="password"
+        class="ipt-primary"
+        iconRight="my-ui-x-iconfont icon-guding"
+      ></my-input>
+    </div>
+    <div class="dome">
+      <my-radio label="1" v-model="gender">男</my-radio>
+      <my-radio label="0" v-model="gender">女</my-radio>
+      <my-radio-group v-model="gender">
+        <my-radio label="1">男</my-radio>
+        <my-radio label="0">女</my-radio>
+      </my-radio-group>
+    </div>
+    <div class="dome">
+      <my-switch v-model="visible"></my-switch>
+      <my-switch v-model="visible" active-color="pink" inactive-color="skyblue"></my-switch>
+    </div>
+    <div class="dome">
+      <my-checkbox v-model="visible3">选项一</my-checkbox>
+      <my-checkbox v-model="visible1">选项二</my-checkbox>
+      <my-checkbox v-model="visible2">选项三</my-checkbox>
+      <my-checkbox-group v-model="hobby">
+        <my-checkbox label="选项一">选项一</my-checkbox>
+        <my-checkbox label="选项二">选项二</my-checkbox>
+        <my-checkbox label="选项三">选项三</my-checkbox>
+      </my-checkbox-group>
     </div>
   </div>
 </template>
@@ -43,7 +131,17 @@ export default {
   data() {
     return {
       visible: false,
-      value: 'sdfsd'
+      visible1: false,
+      visible2: false,
+      visible3: false,
+      visible4: false,
+      visible5: false,
+      visible6: false,
+      visible7: false,
+      visible8: false,
+      value: 'sdfsd',
+      gender: '1',
+      hobby: []
     };
   },
   methods: {
@@ -59,42 +157,30 @@ export default {
   height: 1200px;
   /deep/ .dome {
     display: flex;
-    padding: 10px;
+    flex-wrap: wrap;
+    padding: 10px 10px 20px;
     border-bottom: 1px solid #ccc;
     > * {
       margin-left: 10px;
-      .my-ui-x-iconfont {
-        font-size: 12px;
-        color: #ccc;
-      }
+      margin-top: 10px;
     }
-    .btn-primary {
-      border: 1px solid #2d8cf0 !important;
-      background-color: #2d8cf0 !important;
-      color: #fff;
-    }
-    .btn-primary:hover {
-      border-color: red !important;
-      opacity: 0.7;
-      color: red;
-      background-color: pink !important;
-    }
-    .btn-primary:focus {
-      border-color: pink !important;
-      opacity: 0.7;
-      color: pink;
-      background-color: brown !important;
-    }
-
-    .ipt-primary input {
-      border: 1px solid #2d8cf0 !important;
-    }
-    .ipt-primary input:hover {
-      border-color: pink !important;
-    }
-    .ipt-primary input:focus {
-      border-color: brown !important;
-    }
+  }
+  .my-button {
+    height: 28px;
+  }
+  .my-input {
+    height: 30px;
+  }
+  .my-checkbox-group {
+    margin-left: 50px;
   }
 }
 </style>
+.my-ui-x-iconfont{
+  font-family: "my-ui-x-iconfont" !important;
+  font-size: inherit;
+  color: inherit;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

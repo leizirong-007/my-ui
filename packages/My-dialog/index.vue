@@ -12,12 +12,12 @@
 5.添加销毁组件方法  解决退出登录时 弹框任然存在的问题
 
   -->
-  <transition name="my-dialog--wrap">
+  <transition name="my-dialog__wrap">
     <div
-      class="my-dialog--wrap--container"
-      ref="my-dialog--wrap--container"
+      class="my-dialog__wrap"
+      ref="my-dialog__wrap"
       @click="$emit('update:visible', false)"
-      :class="[dynamicClass, isMinimality ? 'my-dialog--wrap--container--isMinimality' : '']"
+      :class="[dynamicClass]"
       v-show="visible"
       @mousedown.stop="toStratosphere"
     >
@@ -33,10 +33,10 @@
           <div
             @mousedown="beginMoveDialog"
             @dblclick.self="fullScreen ? isFullScreen = !isFullScreen : null"
-            class="my-dialog--header"
+            class="my-dialog__header"
             :style="{ cursor: shift ? 'move' : '' }"
           >
-            <span class="my-dialog--header--titile">{{ title }}</span>
+            <span @mousedown.stop class="my-dialog__header__titile">{{ title }}</span>
             <button
               class="my-ui-x-iconfont icon-zuixiaohua"
               @click="minimalityHandle"
@@ -55,7 +55,7 @@
               @click="$emit('update:visible', false)"
             ></button>
           </div>
-          <div class="my-dialog--body">
+          <div class="my-dialog__body">
             <!-- 默认插槽 -->
             <slot></slot>
           </div>
@@ -156,9 +156,9 @@ export default {
     // this.$emit('update:visible', false)
   },
   beforeDestroy() {
-    document.body.removeChild(this.$refs['my-dialog--wrap--container'])
-    if (document.querySelector('.my-dialog--manager--wrap')) {
-      document.body.removeChild(document.querySelector('.my-dialog--manager--wrap'))
+    document.body.removeChild(this.$refs['my-dialog__wrap'])
+    if (document.querySelector('.my-dialog__manager__wrap')) {
+      document.body.removeChild(document.querySelector('.my-dialog__manager__wrap'))
       // 清空管理器中所有的缓冲对话框
       // this.managerData = []  此方法不可取 因为this.managerData是引用数据  需要按照以下方法改变原数组清空
       this.managerData.splice(0, this.managerData.length)
@@ -176,7 +176,7 @@ export default {
     },
     managerData(val) {
       if (!this.managerData[0]) {
-        document.querySelector(".my-dialog--manager").style.display = "none"
+        document.querySelector(".my-dialog__manager").style.display = "none"
       }
 
       val.forEach((item) => {
@@ -184,7 +184,7 @@ export default {
           return
         }
       })
-      if (this.$refs['my-dialog--wrap--container'].__vue__._uid == this.toBeDeleted.__vId) {
+      if (this.$refs['my-dialog__wrap'].__vue__._uid == this.toBeDeleted.__vId) {
         this.$emit('update:visible', true)
       }
     },
@@ -194,34 +194,34 @@ export default {
 
       // 全屏模式 只返回 全屏class
       if (this.isFullScreen) {
-        return "my-dialog--fullScreen";
+        return "my-dialog__fullScreen";
       }
       // 遮罩 移动 并存时 默认舍去遮罩
       if (this.shift) {
-        return "my-dialog--shift";
+        return "my-dialog__shift";
       }
       // 只需要遮罩 其他都是默认样式
       if (this.shade) {
-        return "my-dialog--shade";
+        return "my-dialog__shade";
       }
       // 不需要遮罩 其他都是默认样式
       if (!this.shade) {
-        return "my-dialog--shade-none";
+        return "my-dialog__shade-none";
       }
-      return 'my-dialog--shade'
+      return 'my-dialog__shade'
     },
     //动态选择阴影模式
     dialogShaow() {
       if (this.shadow) {
-        return "my-dialog--hover--shadow";
+        return "my-dialog__hover__shadow";
       }
-      return "my-dialog--shadow";
+      return "my-dialog__shadow";
     },
   },
   methods: {
     //初始化位置
     initializePosition(banOffset) {
-      let dialogWrap = this.$refs['my-dialog--wrap--container'];
+      let dialogWrap = this.$refs['my-dialog__wrap'];
       let getRndInteger = (min, max) => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
       }
@@ -234,13 +234,13 @@ export default {
       dialogWrap.style.top = window.innerHeight - (window.innerHeight / 2) - (this.height / 2) + stochasticY + "px";
       this.isFullScreen = false;
       //监听窗口缩放时自动更改位置
-      // window.onresize = this.collisionDetection(this.$refs["my-dialog--wrap--container"])
+      // window.onresize = this.collisionDetection(this.$refs["my-dialog__wrap"])
     },
     //移动的方法
     beginMoveDialog(e) {
       //鼠标点选移动时 禁止过度效果 否则效果表现为卡顿
-      this.$refs['my-dialog--wrap--container'].style.transitionProperty = 'none'
-      this.$refs['my-dialog--wrap--container'].style.transitionDuration = 'none'
+      this.$refs['my-dialog__wrap'].style.transitionProperty = 'none'
+      this.$refs['my-dialog__wrap'].style.transitionDuration = 'none'
       // 鼠标按下移动时禁止选中文字 
       let { offsetX, offsetY } = e;
       //是否需要移动功能
@@ -249,20 +249,20 @@ export default {
       }
       document.documentElement.onmousemove = (e) => {
         let { clientX, clientY } = e;
-        this.$refs["my-dialog--wrap--container"].style.position = "fixed";
-        // this.$refs['fl--dialog--wrap--container'].style.boxShadow = '0 0 10px 5px rgba(0,0,0,0.5)'
-        this.$refs["my-dialog--wrap--container"].style.left = clientX - offsetX + "px";
-        this.$refs["my-dialog--wrap--container"].style.top = clientY - offsetY + "px";
+        this.$refs["my-dialog__wrap"].style.position = "fixed";
+        // this.$refs['fl__dialog__wrap__container'].style.boxShadow = '0 0 10px 5px rgba(0,0,0,0.5)'
+        this.$refs["my-dialog__wrap"].style.left = clientX - offsetX + "px";
+        this.$refs["my-dialog__wrap"].style.top = clientY - offsetY + "px";
         if (this.touchDetection) {
-          this.collisionDetection(this.$refs["my-dialog--wrap--container"])
+          this.collisionDetection(this.$refs["my-dialog__wrap"])
         }
       };
       //添加鼠标松开监听
       document.documentElement.onmouseup = () => {
         document.documentElement.onmousemove = null;
         //鼠标松开时还原  否则点下后不再有过度效果
-        this.$refs['my-dialog--wrap--container'].style.transitionProperty = 'top , left'
-        this.$refs['my-dialog--wrap--container'].style.transitionDuration = '0.5 , 0.5'
+        this.$refs['my-dialog__wrap'].style.transitionProperty = 'top , left'
+        this.$refs['my-dialog__wrap'].style.transitionDuration = '0.5 , 0.5'
       };
     },
     //是否添加防碰撞
@@ -295,19 +295,19 @@ export default {
     },
     //点选的dialog去到最上层
     toStratosphere() {
-      let dialogArr = document.querySelectorAll(".my-dialog--wrap--container");
+      let dialogArr = document.querySelectorAll(".my-dialog__wrap");
       dialogArr.forEach((item) => {
         // 使其每次打开都全部减一 从而不破坏冒泡顺序
         if (item.style.zIndex > 1) {
           item.style.zIndex -= 1;
         }
       });
-      this.$refs["my-dialog--wrap--container"].style.zIndex = this.zIndex;
+      this.$refs["my-dialog__wrap"].style.zIndex = this.zIndex;
     },
     //是否将dialog插入至body
     appendToBodyHandle() {
       if (this.appendToBody) {
-        document.querySelector("body").append(this.$refs["my-dialog--wrap--container"]);
+        document.querySelector("body").append(this.$refs["my-dialog__wrap"]);
       }
     },
     //是否最小化
@@ -318,14 +318,14 @@ export default {
     },
     //添加最小化窗口管理器
     addDialogManager() {
-      let dialogManager = document.querySelector(".my-dialog--manager--wrap");
+      let dialogManager = document.querySelector(".my-dialog__manager__wrap");
       //这个判断 判断是否存在管理器container
       if (dialogManager) {
         return
       }
       else { //创造管理器
         let dialogManagerWrap = document.createElement("div");
-        dialogManagerWrap.className = "my-dialog--manager--wrap";
+        dialogManagerWrap.className = "my-dialog__manager__wrap";
         document.body.append(dialogManagerWrap);
         this.showManager = true
         //初始化管理器位置
@@ -336,12 +336,12 @@ export default {
       //重置将要删除节点为null 
       this.toBeDeleted.__vId = null
       //拿到管理器节点
-      let dialogManager = document.querySelector(".my-dialog--manager");
+      let dialogManager = document.querySelector(".my-dialog__manager");
       dialogManager.style.display = "flex";
       let exist = false
       //判断点开的dialog是否已经存在 管理器中
       this.managerData.forEach((item) => {
-        if (item.__vId == this.$refs['my-dialog--wrap--container'].__vue__._uid) {
+        if (item.__vId == this.$refs['my-dialog__wrap'].__vue__._uid) {
           return exist = true
         }
       })
@@ -350,7 +350,7 @@ export default {
       if (!exist) {
         Manager.addOne()
         this.managerData.push({
-          __vId: this.$refs['my-dialog--wrap--container'].__vue__._uid,
+          __vId: this.$refs['my-dialog__wrap'].__vue__._uid,
           title: this.title
         })
       }
@@ -359,7 +359,7 @@ export default {
     reduceTODialogManager() {
 
       this.managerData.forEach((item, index) => {
-        if (item.__vId == this.$refs['my-dialog--wrap--container'].__vue__._uid) {
+        if (item.__vId == this.$refs['my-dialog__wrap'].__vue__._uid) {
           this.managerData.splice(index, 1)
         }
       })
@@ -384,13 +384,13 @@ export default {
     transform: scale(1);
   }
 }
-.my-dialog--wrap-enter-active {
+.my-dialog__wrap-enter-active {
   animation: dialogAnimation 0.5s;
 }
-.my-dialog--wrap-leave-active {
+.my-dialog__wrap-leave-active {
   animation: dialogAnimation 0.5s reverse;
 }
-.my-dialog--wrap--container {
+.my-dialog__wrap {
   // transition: left 0.1s linear;
   transition: box-shadow 0.2s;
   font-size: 12px;
@@ -427,7 +427,7 @@ export default {
     // transition-property: width, height;
     // transition-duration: 2s, 2s;
     // transition-timing-function: linear, linear;
-    .my-dialog--header {
+    .my-dialog__header {
       background-color: #ccc;
       height: 30px;
       display: flex;
@@ -438,18 +438,18 @@ export default {
         margin-left: 15px;
         background-color: transparent;
       }
-      .my-dialog--header--titile {
-        user-select: none;
+      .my-dialog__header__titile {
         position: absolute;
-        line-height: 30px;
-        top: 0;
+        top: 50%;
+        transform: translateY(-50%);
         left: 0;
+        cursor: default;
       }
       > :last-child {
         margin-right: 10px;
       }
     }
-    .my-dialog--body {
+    .my-dialog__body {
       height: calc(100% - 40px);
       border: 1px solid #ccc;
       margin: 5px;
@@ -457,11 +457,11 @@ export default {
     }
   }
   //阴影效果
-  .my-dialog--shadow {
+  .my-dialog__shadow {
     box-shadow: 0 2px 12px 0 rgba(12, 20, 23, 0.15);
   }
   //hover效果
-  .my-dialog--hover--shadow {
+  .my-dialog__hover__shadow {
     box-shadow: 0 2px 12px 0 rgba(12, 20, 23, 0.1);
     transition: box-shadow 0.2s ease-in-out;
     &:hover {
@@ -470,7 +470,7 @@ export default {
   }
 }
 //默认遮罩样式
-.my-dialog--shade {
+.my-dialog__shade {
   background-color: rgba(0, 0, 0, 0.4);
   width: 100%;
   height: 100%;
@@ -485,7 +485,7 @@ export default {
   // }
 }
 //隐藏遮罩层样式
-.my-dialog--shade-none {
+.my-dialog__shade-none {
   position: fixed;
   width: 0;
   height: 0;
@@ -499,7 +499,7 @@ export default {
   }
 }
 //可移动时样式
-.my-dialog--shift {
+.my-dialog__shift {
   width: 0;
   height: 0;
   position: fixed;
@@ -513,7 +513,7 @@ export default {
   }
 }
 //全屏时的样式
-.my-dialog--fullScreen {
+.my-dialog__fullScreen {
   position: fixed;
   width: 100%;
   height: 100%;
@@ -529,7 +529,7 @@ export default {
     transition-property: width, height;
     transition-duration: 0.1s, 0.1s;
     transition-timing-function: linear, linear;
-    .my-dialog--header {
+    .my-dialog__header {
       cursor: default !important;
     }
   }

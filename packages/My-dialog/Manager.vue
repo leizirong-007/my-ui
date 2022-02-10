@@ -1,13 +1,13 @@
 <template>
   <div
-    ref="my-dialog--manager"
+    ref="my-dialog__manager"
     :style="{ width: width + 'px', height: height + 'px' }"
-    class="my-dialog--manager"
-    :class="positionKeep ? 'my-dialog--manager--positionKeep' : 'my-dialog--manager--normal'"
+    class="my-dialog__manager"
+    :class="positionKeep ? 'my-dialog__manager__positionKeep' : 'my-dialog__manager__normal'"
   >
-    <div @mousedown.self="beginMoveDialog" class="my-dialog--manager--header">
+    <div @mousedown.self="beginMoveDialog" class="my-dialog__manager__header">
       <button
-        :class="positionKeep ? 'positionKeep--open' : 'positionKeep--close'"
+        :class="positionKeep ? 'positionKeep__open' : 'positionKeep__close'"
         @click="positionKeep = !positionKeep"
       >
         <i class="my-ui-x-iconfont icon-guding"></i>
@@ -16,9 +16,9 @@
         <i class="my-ui-x-iconfont icon-guanbi"></i>
       </button>
     </div>
-    <ul class="my-dialog--manager--body">
+    <ul class="my-dialog__manager__body">
       <li
-        class="my-dialog--manager--body--item"
+        class="my-dialog__manager__body__item"
         v-for="(item) in managerData"
         @click="showDialog(item.__vId)"
         :key="item.__vId"
@@ -75,25 +75,25 @@ export default {
     //移动的方法
     beginMoveDialog(e) {
 
-      this.$refs["my-dialog--manager"].style.transitionProperty = ' width, height '
+      this.$refs["my-dialog__manager"].style.transitionProperty = ' width, height '
       // 鼠标按下移动时禁止选中文字 
       let { offsetX, offsetY } = e;
       //是否需要移动功能
       document.documentElement.onmousemove = (e) => {
         let { clientX, clientY } = e;
-        this.$refs["my-dialog--manager"].style.position = "fixed";
-        // this.$refs['fl--dialog--wrap--container'].style.boxShadow = '0 0 10px 5px rgba(0,0,0,0.5)'
-        this.$refs["my-dialog--manager"].style.left = clientX - offsetX + "px";
-        this.$refs["my-dialog--manager"].style.top = clientY - offsetY + "px";
+        this.$refs["my-dialog__manager"].style.position = "fixed";
+        // this.$refs['fl__dialog__wrap__container'].style.boxShadow = '0 0 10px 5px rgba(0,0,0,0.5)'
+        this.$refs["my-dialog__manager"].style.left = clientX - offsetX + "px";
+        this.$refs["my-dialog__manager"].style.top = clientY - offsetY + "px";
         if (this.detection) {
-          this.collisionDetection(this.$refs["my-dialog--manager"])
+          this.collisionDetection(this.$refs["my-dialog__manager"])
         }
       };
       //添加鼠标松开监听
       document.documentElement.onmouseup = () => {
         document.documentElement.onmousemove = null;
         this.screenSizeWatch()
-        this.$refs["my-dialog--manager"].style.transitionProperty = ' width, height, top, left'
+        this.$refs["my-dialog__manager"].style.transitionProperty = ' width, height, top, left'
       };
     },
     //碰撞检测
@@ -127,14 +127,14 @@ export default {
     },
     //初始化位置
     initializePosition() {
-      let dialogManager = document.querySelector(".my-dialog--manager");
+      let dialogManager = document.querySelector(".my-dialog__manager");
       dialogManager.style.position = "fixed";
       dialogManager.style.top = "50px";
       dialogManager.style.left = window.innerWidth - parseInt(dialogManager.style.width) - 120 + "px";
     },
     // 插入到body
     appendToWrap() {
-      return document.querySelector(".my-dialog--manager--wrap").append(document.querySelector(".my-dialog--manager"))
+      return document.querySelector(".my-dialog__manager__wrap").append(document.querySelector(".my-dialog__manager"))
     },
     //点击li显示对应弹框
     showDialog(__vId) {
@@ -176,23 +176,19 @@ export default {
 }
 </script>
 
-<!-- <style lang="less"  >
-.my-dialog--manager--wrap {
-  position: fixed;
-}
-</style> -->
+ 
 <style lang='less' scoped>
-.my-dialog--manager--normal {
+.my-dialog__manager__normal {
   &:hover {
     width: 120px !important;
     height: 200px !important;
   }
 }
-.my-dialog--manager--positionKeep {
+.my-dialog__manager__positionKeep {
   width: 120px !important;
   height: 200px !important;
 }
-.my-dialog--manager {
+.my-dialog__manager {
   font-size: 12px;
   line-height: 25px;
   position: fixed;
@@ -210,13 +206,13 @@ export default {
   -khtml-user-select: none;
   user-select: none;
   min-width: 60px;
-  &:hover &--header > :first-child {
+  &:hover &__header > :first-child {
     display: flex;
   }
-  &:hover &--body {
+  &:hover &__body {
     overflow: auto;
   }
-  &--header {
+  &__header {
     height: 50px;
     max-height: 30px;
     min-height: 20px;
@@ -225,10 +221,10 @@ export default {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    .positionKeep--close {
+    .positionKeep__close {
       display: none;
     }
-    .positionKeep--open {
+    .positionKeep__open {
       display: flex;
       background-color: #b2c4fc;
       border-color: #b2c4fc;
@@ -249,20 +245,22 @@ export default {
         border-color: #b2c4fc;
       }
       i {
+        position: relative;
+        top:  1px;
         font-size: 12px;
         display: flex;
         justify-content: center;
         align-items: center;
         width: 100%;
         height: 100%;
-        transform: scale(0.9);
+        transform: scale(0.8);
       }
     }
   }
-  &--body {
+  &__body {
     background-color: #fff;
     height: 170px;
-    padding: 0 2px;
+    padding: 0 5px;
     overflow: hidden;
     &::-webkit-scrollbar {
       width: 4px;
@@ -277,7 +275,7 @@ export default {
       background-color: rgba(180, 180, 180, 0.4);
     }
 
-    &--item {
+    &__item {
       white-space: nowrap;
       width: 100%;
       max-height: 25px;

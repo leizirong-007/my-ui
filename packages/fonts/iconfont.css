@@ -1,16 +1,29 @@
 @font-face {
   font-family: "my-ui-x-iconfont"; /* Project id 3063428 */
-  src: url('iconfont.woff2?t=1644399415426') format('woff2'),
-       url('iconfont.woff?t=1644399415426') format('woff'),
-       url('iconfont.ttf?t=1644399415426') format('truetype');
+  src: url('iconfont.woff2?t=1644475032396') format('woff2'),
+       url('iconfont.woff?t=1644475032396') format('woff'),
+       url('iconfont.ttf?t=1644475032396') format('truetype');
 }
 
 .my-ui-x-iconfont{
   font-family: "my-ui-x-iconfont" !important;
   font-size: inherit;
+  color: inherit;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-duigou:before {
+  content: "\ebe6";
+}
+
+.icon-kejian:before {
+  content: "\e62d";
+}
+
+.icon-act_qingchu:before {
+  content: "\e600";
 }
 
 .icon-guding:before {

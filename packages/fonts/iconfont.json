@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "4611765",
+      "name": "对勾",
+      "font_class": "duigou",
+      "unicode": "ebe6",
+      "unicode_decimal": 60390
+    },
+    {
+      "icon_id": "4022925",
+      "name": "可见",
+      "font_class": "kejian",
+      "unicode": "e62d",
+      "unicode_decimal": 58925
+    },
+    {
+      "icon_id": "11376545",
+      "name": "61act_清除",
+      "font_class": "act_qingchu",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
       "icon_id": "755543",
       "name": "固定",
       "font_class": "guding",
