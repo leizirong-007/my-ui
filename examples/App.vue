@@ -14,17 +14,17 @@
         style="padding: 20px;"
       >shade shift height width shadow fullScreen minimality resetPostion appendToBody title touchDetection windowMonitor</div>
     </my-dialog>
-    <my-dialog title="asdfasdfsdfsadfsdfsa" :visible.sync="visible1" shift minimality>
+    <my-dialog title="asdfasdfsdfsadfsdfsa" :visible.sync="visible1"  minimality>
       <div
         style="padding: 20px;"
       >shade shift height width shadow fullScreen minimality resetPostion appendToBody title touchDetection windowMonitor</div>
     </my-dialog>
-    <my-dialog title="asdfasdfsdfsadfsdfsa" :visible.sync="visible2" shift minimality>
+    <my-dialog title="asdfasdfsdfsadfsdfsa" :visible.sync="visible2"  shift minimality>
       <div
         style="padding: 20px;"
       >shade shift height width shadow fullScreen minimality resetPostion appendToBody title touchDetection windowMonitor</div>
     </my-dialog>
-    <my-dialog title="asdfasdfsdfsadfsdfsa" :visible.sync="visible3" shift minimality>
+    <my-dialog title="asdfasdfsdfsadfsdfsa" :visible.sync="visible3" :shade="false"  minimality>
       <div
         style="padding: 20px;"
       >shade shift height width shadow fullScreen minimality resetPostion appendToBody title touchDetection windowMonitor</div>
@@ -66,14 +66,14 @@
         iconRight="my-ui-x-iconfont icon-guding"
       >按钮</my-button>
 
-      <my-button @click="visible1 = !visible1" iconLeft="my-ui-x-iconfont icon-guding">点击打开一个弹窗</my-button>
-      <my-button @click="visible2 = !visible2" iconLeft="my-ui-x-iconfont icon-guding">点击打开一个弹窗</my-button>
-      <my-button @click="visible3 = !visible3" iconLeft="my-ui-x-iconfont icon-guding">点击打开一个弹窗</my-button>
-      <my-button @click="visible4 = !visible4" iconLeft="my-ui-x-iconfont icon-guding">点击打开一个弹窗</my-button>
-      <my-button @click="visible5 = !visible5" iconLeft="my-ui-x-iconfont icon-guding">点击打开一个弹窗</my-button>
-      <my-button @click="visible6 = !visible6" iconLeft="my-ui-x-iconfont icon-guding">点击打开一个弹窗</my-button>
-      <my-button @click="visible7 = !visible7" iconLeft="my-ui-x-iconfont icon-guding">点击打开一个弹窗</my-button>
-      <my-button @click="visible8 = !visible8" iconLeft="my-ui-x-iconfont icon-guding">点击打开一个弹窗</my-button>
+      <my-button @click="visible1 = !visible1" iconLeft="my-ui-x-iconfont icon-guding">默认弹窗</my-button>
+      <my-button @click="visible2 = !visible2" iconLeft="my-ui-x-iconfont icon-guding">移动+最小化</my-button>
+      <my-button @click="visible3 = !visible3" iconLeft="my-ui-x-iconfont icon-guding">无遮罩+最小化</my-button>
+      <my-button @click="visible4 = !visible4" iconLeft="my-ui-x-iconfont icon-guding">打开一个弹窗</my-button>
+      <my-button @click="visible5 = !visible5" iconLeft="my-ui-x-iconfont icon-guding">打开一个弹窗</my-button>
+      <my-button @click="visible6 = !visible6" iconLeft="my-ui-x-iconfont icon-guding">打开一个弹窗</my-button>
+      <my-button @click="visible7 = !visible7" iconLeft="my-ui-x-iconfont icon-guding">打开一个弹窗</my-button>
+      <my-button @click="visible8 = !visible8" iconLeft="my-ui-x-iconfont icon-guding">打开一个弹窗</my-button>
     </div>
     <div class="dome">
       <my-input disabled icon-right="my-ui-x-iconfont icon-guding"></my-input>
@@ -153,6 +153,14 @@ export default {
 </script>
 
 <style lang="less" scoped>
+// .my-ui-x-iconfont{
+//   font-family: "my-ui-x-iconfont" !important;
+//   font-size: inherit;
+//   color: inherit;
+//   font-style: normal;
+//   -webkit-font-smoothing: antialiased;
+//   -moz-osx-font-smoothing: grayscale;
+// }
 #app {
   height: 1200px;
   /deep/ .dome {
@@ -176,11 +184,3 @@ export default {
   }
 }
 </style>
-.my-ui-x-iconfont{
-  font-family: "my-ui-x-iconfont" !important;
-  font-size: inherit;
-  color: inherit;
-  font-style: normal;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}

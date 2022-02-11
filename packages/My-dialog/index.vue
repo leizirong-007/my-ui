@@ -16,51 +16,71 @@
     <div
       class="my-dialog__wrap"
       ref="my-dialog__wrap"
-      @click="$emit('update:visible', false)"
+      @mousedown.self="$emit('update:visible', false)"
       :class="[dynamicClass]"
       v-show="visible"
       @mousedown.stop="toStratosphere"
     >
+      <!-- 拉伸容器 -->
+      <div
+        @mousemove="whichDirection"
+        @mousedown="beginResize"
+        ref="my-dialog__resize"
+        class="my-dialog__resize"
+        :style="{
+          height: height + 'px',
+          width: width + 'px',
+          cursor: stretchDirection
+        }"
+      ></div>
+
       <transition name="my-dialog">
+        <!-- dialog容器 -->
         <div
           @click.stop
           class="my-dialog"
-          :class="[dialogShaow]"
+          ref="my-dialog"
+          :class="[dialogShadow]"
           :style="{ height: height + 'px', width: width + 'px' }"
           v-show="visible"
         >
+          <!-- 管理器组件 -->
           <Manager v-if="showManager" />
+          <!-- 头容器 -->
           <div
             @mousedown="beginMoveDialog"
-            @dblclick.self="fullScreen ? isFullScreen = !isFullScreen : null"
+            @dblclick.self.stop="fullScreen ? isFullScreen = !isFullScreen : null"
             class="my-dialog__header"
             :style="{ cursor: shift ? 'move' : '' }"
           >
             <span @mousedown.stop class="my-dialog__header__titile">{{ title }}</span>
             <button
               class="my-ui-x-iconfont icon-zuixiaohua"
-              @click="minimalityHandle"
+              @click.self="minimalityHandle"
               v-show="minimality"
               @mousedown.stop="toStratosphere"
             ></button>
             <button
               :class="['my-ui-x-iconfont', isFullScreen ? 'icon-zuidahua-1' : 'icon-zuidahua']"
-              @click="isFullScreen = !isFullScreen"
+              @click.self="isFullScreen = !isFullScreen"
               v-show="fullScreen"
               @mousedown.stop="toStratosphere"
             ></button>
             <button
               class="my-ui-x-iconfont icon-guanbi"
               @mousedown.stop="toStratosphere"
-              @click="$emit('update:visible', false)"
+              @click.self="$emit('update:visible', false)"
             ></button>
           </div>
+          <!-- 身体容器 -->
           <div class="my-dialog__body">
             <!-- 默认插槽 -->
             <slot></slot>
           </div>
         </div>
       </transition>
+      <!-- 拉伸时的遮罩 解决移动到其他元素上鼠标样式不一致问题 -->
+      <div ref="my-dialog__resize__flag" class="my-dialog__resize__flag"></div>
     </div>
   </transition>
 </template>
@@ -132,11 +152,12 @@ export default {
       isMinimality: false,
       showManager: false,
       managerData: Manager.managerData,
-      toBeDeleted: Manager.toBeDeleted
+      toBeDeleted: Manager.toBeDeleted,
+      stretchDirection: '',
+      whichDirectionFlag: false
     };
   },
   mounted() {
-
     //是否将dialog放入值body
     this.appendToBodyHandle();
     //添加dialog管理器
@@ -150,10 +171,6 @@ export default {
         this.screenSizeWatch()
       }
     }
-  },
-  deactivated() {
-    //路由失活时，是否隐藏dialog对话框
-    // this.$emit('update:visible', false)
   },
   beforeDestroy() {
     document.body.removeChild(this.$refs['my-dialog__wrap'])
@@ -191,7 +208,6 @@ export default {
   },
   computed: {
     dynamicClass() {
-
       // 全屏模式 只返回 全屏class
       if (this.isFullScreen) {
         return "my-dialog__fullScreen";
@@ -206,16 +222,16 @@ export default {
       }
       // 不需要遮罩 其他都是默认样式
       if (!this.shade) {
-        return "my-dialog__shade-none";
+        return "my-dialog__shade__hidden";
       }
       return 'my-dialog__shade'
     },
     //动态选择阴影模式
-    dialogShaow() {
+    dialogShadow() {
       if (this.shadow) {
         return "my-dialog__hover__shadow";
       }
-      return "my-dialog__shadow";
+      return ''
     },
   },
   methods: {
@@ -241,16 +257,19 @@ export default {
       //鼠标点选移动时 禁止过度效果 否则效果表现为卡顿
       this.$refs['my-dialog__wrap'].style.transitionProperty = 'none'
       this.$refs['my-dialog__wrap'].style.transitionDuration = 'none'
-      // 鼠标按下移动时禁止选中文字 
+      // 鼠标距离元素的上边距和左边距
       let { offsetX, offsetY } = e;
       //是否需要移动功能
       if (!this.shift || this.isFullScreen) {
         return;
       }
       document.documentElement.onmousemove = (e) => {
+        // 鼠标所处窗口的位置
         let { clientX, clientY } = e;
+        // 由于 offsetX, offsetY 基于的元素是 my-dialog__header 但移动的元素是 my-dialog__wrap ，需要减去 两个元素之间的top和left值差
+        // clientX -= 5, clientY -= 5
+        // 跟随鼠标移动
         this.$refs["my-dialog__wrap"].style.position = "fixed";
-        // this.$refs['fl__dialog__wrap__container'].style.boxShadow = '0 0 10px 5px rgba(0,0,0,0.5)'
         this.$refs["my-dialog__wrap"].style.left = clientX - offsetX + "px";
         this.$refs["my-dialog__wrap"].style.top = clientY - offsetY + "px";
         if (this.touchDetection) {
@@ -367,8 +386,89 @@ export default {
       // if (!this.managerData[0]) {
       //   return dialogManager.style.display = "none";
       // }
+    },
+    // 判断拉伸方向的方法  lt, t, rt, r, br, b, lb, l
+    whichDirection(e) {
+      // 当鼠标按下准备缩放时 取消鼠标图标样式监听监听事件
+      if (this.whichDirectionFlag) return
+
+      let { offsetX, offsetY } = e
+      console.log(offsetX, offsetY);
+      // 上 
+      if (offsetX > 4 && offsetX < this.width - 4 && offsetY < 0) {
+        this.stretchDirection = 'n-resize'
+      }
+      // 下
+      else if (offsetX > 4 && offsetX < this.width - 4 && offsetY > 0) {
+        this.stretchDirection = 's-resize'
+      }
+      // 左 
+      else if (offsetY > 4 && offsetY < this.height - 4 && offsetX < 0) {
+        this.stretchDirection = 'e-resize'
+      }
+      // 右
+      else if (offsetY > 4 && offsetY < this.height - 4 && offsetX > 0) {
+        this.stretchDirection = 'w-resize'
+      }
+      // 左上
+      else if (offsetX < 4 && offsetY < 4) {
+        this.stretchDirection = 'se-resize'
+      }
+      // 左下
+      else if (offsetX < 4 && offsetY > this.height - 4) {
+        this.stretchDirection = 'sw-resize'
+      }
+      // 右上
+      else if (offsetX > this.width - 4 && offsetY < 4) {
+        this.stretchDirection = 'ne-resize'
+      }
+      // 右下
+      else if (offsetX > this.width - 4 && offsetY > this.height - 4) {
+        this.stretchDirection = 'nw-resize'
+      }
+    },
+    // 处理缩放的方法 
+    beginResize(e) {
+      // 修改全局鼠标样式
+      this.whichDirectionFlag = true
+      this.$refs['my-dialog__resize__flag'].style.display = 'block'
+      this.$refs['my-dialog__resize__flag'].style.cursor = this.stretchDirection
+      this.$refs['my-dialog__resize__flag'].style.zIndex = 999
+
+      // 鼠标按下时的坐标
+      let defClientX = e.clientX, defClientY = e.clientY;
+      console.log(defClientX, defClientY);
+      let removeHeight = 0, removeWidth = 0
+      document.documentElement.onmousemove = (e) => {
+        // 鼠标走过按下到移动的距离
+        let { clientX, clientY } = e;
+        removeHeight += (clientY - defClientY)
+        removeWidth += (clientX - defClientX)
+        console.log(removeHeight, removeWidth);
+        // 鼠标所处窗口的位置
+        // 由于 offsetX, offsetY 基于的元素是 my-dialog__header 但移动的元素是 my-dialog__wrap ，需要减去 两个元素之间的top和left值差
+        // clientX -= 5, clientY -= 5
+        // 跟随鼠标移动
+        // this.$refs["my-dialog"].style.height = this.height + removeHeight + "px";
+        // this.$refs["my-dialog"].style.width = this.width + removeWidth + "px";
+
+        if (this.stretchDirection == 'n-resize') {
+          console.log('上');
+          this.$refs["my-dialog"].style.height = (this.height - removeHeight) + "px";
+
+        }
+      };
+
+      document.documentElement.onmouseup = () => {
+        document.documentElement.onmousemove = null
+        // 复原
+        this.whichDirectionFlag = false
+        this.$refs['my-dialog__resize__flag'].style.display = 'none'
+        document.documentElement.style.cursor = 'default'
+        this.$refs['my-dialog__resize__flag'].style.zIndex = -1
+      }
     }
-  },
+  }
 }
 </script>
 
@@ -390,6 +490,100 @@ export default {
 .my-dialog__wrap-leave-active {
   animation: dialogAnimation 0.5s reverse;
 }
+
+//默认遮罩样式
+.my-dialog__shade {
+  background-color: rgba(0, 0, 0, 0.4);
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .my-dialog__resize {
+    display: none;
+  }
+}
+//隐藏遮罩层样式
+.my-dialog__shade__hidden {
+  position: fixed;
+  width: 0;
+  height: 0;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .my-dialog__resize {
+    display: none;
+  }
+  .my-dialog {
+    position: fixed;
+  }
+}
+//可移动时样式
+.my-dialog__shift {
+  width: 0;
+  height: 0;
+  position: fixed;
+  .my-dialog {
+    position: fixed;
+  }
+}
+//全屏时的样式
+.my-dialog__fullScreen {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0 !important;
+  left: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .my-dialog {
+    margin: 0;
+    width: 100% !important;
+    height: 100% !important;
+    transition-property: width, height;
+    transition-duration: 0.1s, 0.1s;
+    transition-timing-function: linear, linear;
+    .my-dialog__header {
+      cursor: default !important;
+    }
+  }
+}
+//阴影hover效果
+.my-dialog__wrap .my-dialog__hover__shadow {
+  transition: box-shadow 0.2s ease-in-out;
+  &:hover {
+    box-shadow: 0 2px 12px 0 rgba(12, 20, 23, 0.4) !important;
+  }
+}
+// 拉伸样式
+
+.my-dialog__wrap .my-dialog__resize {
+  z-index: -1;
+  top: -4px;
+  left: -4px;
+  position: absolute;
+  box-sizing: content-box;
+  border: 4px solid pink;
+  &:hover + .my-dialog {
+    box-shadow: 0 2px 12px 0 rgba(12, 20, 23, 0.4) !important;
+  }
+}
+// <!-- 拉伸时的遮罩 解决移动到其他元素上鼠标样式不一致问题 -->
+.my-dialog__resize__flag {
+  position: fixed;
+  display: none;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+// 默认样式
 .my-dialog__wrap {
   // transition: left 0.1s linear;
   transition: box-shadow 0.2s;
@@ -424,11 +618,10 @@ export default {
     background-color: #fff;
     border-radius: 0.2em;
     overflow: hidden;
-    // transition-property: width, height;
-    // transition-duration: 2s, 2s;
-    // transition-timing-function: linear, linear;
+    //阴影效果
+    box-shadow: 0 2px 12px 0 rgba(12, 20, 23, 0.15);
     .my-dialog__header {
-      background-color: #ccc;
+      background-color: #ddd;
       height: 30px;
       display: flex;
       justify-content: flex-end;
@@ -450,87 +643,8 @@ export default {
       }
     }
     .my-dialog__body {
-      height: calc(100% - 40px);
-      border: 1px solid #ccc;
-      margin: 5px;
+      padding: 15px;
       cursor: default;
-    }
-  }
-  //阴影效果
-  .my-dialog__shadow {
-    box-shadow: 0 2px 12px 0 rgba(12, 20, 23, 0.15);
-  }
-  //hover效果
-  .my-dialog__hover__shadow {
-    box-shadow: 0 2px 12px 0 rgba(12, 20, 23, 0.1);
-    transition: box-shadow 0.2s ease-in-out;
-    &:hover {
-      box-shadow: 0 2px 12px 0 rgba(12, 20, 23, 0.4);
-    }
-  }
-}
-//默认遮罩样式
-.my-dialog__shade {
-  background-color: rgba(0, 0, 0, 0.4);
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  // .my-dialog {
-  //   margin-top: 30vh;
-  // }
-}
-//隐藏遮罩层样式
-.my-dialog__shade-none {
-  position: fixed;
-  width: 0;
-  height: 0;
-  top: 50%;
-  left: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  .my-dialog {
-    position: fixed;
-  }
-}
-//可移动时样式
-.my-dialog__shift {
-  width: 0;
-  height: 0;
-  position: fixed;
-  // top: 30vh;
-  // border: 5px solid #000;
-  .my-dialog {
-    // transition-property: width, height;
-    // transition-duration: 0.2s, 0.2s;
-    // transition-timing-function: linear, linear;
-    position: fixed;
-  }
-}
-//全屏时的样式
-.my-dialog__fullScreen {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  top: 0 !important;
-  left: 0 !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  .my-dialog {
-    margin: 0;
-    width: 100% !important;
-    height: 100% !important;
-    transition-property: width, height;
-    transition-duration: 0.1s, 0.1s;
-    transition-timing-function: linear, linear;
-    .my-dialog__header {
-      cursor: default !important;
     }
   }
 }
