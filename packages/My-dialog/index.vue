@@ -28,12 +28,11 @@
         ref="my-dialog__resize"
         class="my-dialog__resize"
         :style="{
-          height: height + 'px',
-          width: width + 'px',
-          cursor: stretchDirection
+          height: dialogHeight + 'px',
+          width: dialogWidth + 'px',
+          cursor: stretchDirection,
         }"
       ></div>
-
       <transition name="my-dialog">
         <!-- dialog容器 -->
         <div
@@ -41,7 +40,7 @@
           class="my-dialog"
           ref="my-dialog"
           :class="[dialogShadow]"
-          :style="{ height: height + 'px', width: width + 'px' }"
+          :style="{ height: dialogHeight + 'px', width: dialogWidth + 'px', borderRadius: borderRadius + 'px' }"
           v-show="visible"
         >
           <!-- 管理器组件 -->
@@ -106,11 +105,11 @@ export default {
     },
     height: {
       type: Number,
-      default: 300
+      default: null
     },
     width: {
       type: Number,
-      default: 400
+      default: null
     },
     shadow: {
       type: Boolean,
@@ -143,10 +142,19 @@ export default {
     windowMonitor: {
       type: Boolean,
       default: false
+    },
+    borderRadius: {
+      type: Number,
+      default: 2,
+      validator: function (value) {
+        return value >= 0 && value <= 14
+      }
     }
   },
   data() {
     return {
+      dialogHeight: 300,
+      dialogWidth: 400,
       zIndex: 9999,
       isFullScreen: false,
       isMinimality: false,
@@ -162,6 +170,8 @@ export default {
     this.appendToBodyHandle();
     //添加dialog管理器
     this.addDialogManager();
+    // 初始化弹窗大小
+    this.setDialogSize()
     if (this.shift) {
       //初始化
       this.initializePosition()
@@ -235,9 +245,20 @@ export default {
     },
   },
   methods: {
+    // 初始化弹窗大小
+    setDialogSize() {
+      // borderRadius:
+      this.$refs['my-dialog__resize'].style.borderRadius = this.$refs['my-dialog'].style.borderRadius
+      if (this.height !== null) {
+        this.dialogHeight = this.height
+      }
+      if (this.width !== null) {
+        this.dialogWidth = this.width
+      }
+    },
     //初始化位置
     initializePosition(banOffset) {
-      let dialogWrap = this.$refs['my-dialog__wrap'];
+      let wrapDiv = this.$refs['my-dialog__wrap'];
       let getRndInteger = (min, max) => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
       }
@@ -246,57 +267,58 @@ export default {
         stochasticX = 0
         stochasticY = 0
       }
-      dialogWrap.style.left = window.innerWidth - (window.innerWidth / 2) - (this.width / 2) + stochasticX + "px";
-      dialogWrap.style.top = window.innerHeight - (window.innerHeight / 2) - (this.height / 2) + stochasticY + "px";
+      wrapDiv.style.top = window.innerHeight - (window.innerHeight / 2) - (this.dialogWidth / 2) + stochasticY + "px";
+      wrapDiv.style.left = window.innerWidth - (window.innerWidth / 2) - (this.dialogWidth / 2) + stochasticX + "px";
       this.isFullScreen = false;
       //监听窗口缩放时自动更改位置
       // window.onresize = this.collisionDetection(this.$refs["my-dialog__wrap"])
     },
-    //移动的方法
-    beginMoveDialog(e) {
+    //弹窗移动的方法
+    beginMoveDialog(params) {
+      let wrapDiv = this.$refs['my-dialog__wrap']
       //鼠标点选移动时 禁止过度效果 否则效果表现为卡顿
-      this.$refs['my-dialog__wrap'].style.transitionProperty = 'none'
-      this.$refs['my-dialog__wrap'].style.transitionDuration = 'none'
+      wrapDiv.style.transitionProperty = 'none'
+      wrapDiv.style.transitionDuration = 'none'
       // 鼠标距离元素的上边距和左边距
-      let { offsetX, offsetY } = e;
+      let { offsetX, offsetY } = params;
       //是否需要移动功能
       if (!this.shift || this.isFullScreen) {
         return;
       }
-      document.documentElement.onmousemove = (e) => {
+      document.documentElement.onmousemove = (params2) => {
         // 鼠标所处窗口的位置
-        let { clientX, clientY } = e;
+        let { clientX, clientY } = params2;
         // 由于 offsetX, offsetY 基于的元素是 my-dialog__header 但移动的元素是 my-dialog__wrap ，需要减去 两个元素之间的top和left值差
         // clientX -= 5, clientY -= 5
         // 跟随鼠标移动
-        this.$refs["my-dialog__wrap"].style.position = "fixed";
-        this.$refs["my-dialog__wrap"].style.left = clientX - offsetX + "px";
-        this.$refs["my-dialog__wrap"].style.top = clientY - offsetY + "px";
+        wrapDiv.style.position = "fixed";
+        wrapDiv.style.left = clientX - offsetX + "px";
+        wrapDiv.style.top = clientY - offsetY + "px";
         if (this.touchDetection) {
-          this.collisionDetection(this.$refs["my-dialog__wrap"])
+          this.collisionDetection(wrapDiv)
         }
       };
       //添加鼠标松开监听
       document.documentElement.onmouseup = () => {
         document.documentElement.onmousemove = null;
         //鼠标松开时还原  否则点下后不再有过度效果
-        this.$refs['my-dialog__wrap'].style.transitionProperty = 'top , left'
-        this.$refs['my-dialog__wrap'].style.transitionDuration = '0.5 , 0.5'
+        wrapDiv.style.transitionProperty = 'top , left'
+        wrapDiv.style.transitionDuration = '0.5 , 0.5'
       };
     },
     //是否添加防碰撞
-    collisionDetection(dialogWrap) {
-      if (parseInt(dialogWrap.style.left) <= 0) {
-        dialogWrap.style.left = '0px'
+    collisionDetection(wrapDiv) {
+      if (parseInt(wrapDiv.style.left) <= 0) {
+        wrapDiv.style.left = '0px'
       }
-      if (parseInt(dialogWrap.style.top) <= 0) {
-        dialogWrap.style.top = '0px'
+      if (parseInt(wrapDiv.style.top) <= 0) {
+        wrapDiv.style.top = '0px'
       }
-      if (parseInt(dialogWrap.style.left) >= (window.innerWidth - this.width)) {
-        dialogWrap.style.left = window.innerWidth - this.width + "px";
+      if (parseInt(wrapDiv.style.left) >= (window.innerWidth - this.dialogWidth)) {
+        wrapDiv.style.left = window.innerWidth - this.dialogWidth + "px";
       }
-      if (parseInt(dialogWrap.style.top) >= window.innerHeight - this.height) {
-        dialogWrap.style.top = window.innerHeight - this.height + "px";
+      if (parseInt(wrapDiv.style.top) >= window.innerHeight - this.dialogHeight) {
+        wrapDiv.style.top = window.innerHeight - this.dialogHeight + "px";
       }
     },
     //监听窗口缩放时自动更改位置
@@ -388,26 +410,25 @@ export default {
       // }
     },
     // 判断拉伸方向的方法  lt, t, rt, r, br, b, lb, l
-    whichDirection(e) {
+    whichDirection(params) {
       // 当鼠标按下准备缩放时 取消鼠标图标样式监听监听事件
       if (this.whichDirectionFlag) return
 
-      let { offsetX, offsetY } = e
-      console.log(offsetX, offsetY);
+      let { offsetX, offsetY } = params
       // 上 
-      if (offsetX > 4 && offsetX < this.width - 4 && offsetY < 0) {
+      if (offsetX > 4 && offsetX < this.dialogWidth - 4 && offsetY < 0) {
         this.stretchDirection = 'n-resize'
       }
       // 下
-      else if (offsetX > 4 && offsetX < this.width - 4 && offsetY > 0) {
+      else if (offsetX > 4 && offsetX < this.dialogWidth - 4 && offsetY > 0) {
         this.stretchDirection = 's-resize'
       }
       // 左 
-      else if (offsetY > 4 && offsetY < this.height - 4 && offsetX < 0) {
+      else if (offsetY > 4 && offsetY < this.dialogHeight - 4 && offsetX < 0) {
         this.stretchDirection = 'e-resize'
       }
       // 右
-      else if (offsetY > 4 && offsetY < this.height - 4 && offsetX > 0) {
+      else if (offsetY > 4 && offsetY < this.dialogHeight - 4 && offsetX > 0) {
         this.stretchDirection = 'w-resize'
       }
       // 左上
@@ -415,57 +436,69 @@ export default {
         this.stretchDirection = 'se-resize'
       }
       // 左下
-      else if (offsetX < 4 && offsetY > this.height - 4) {
+      else if (offsetX < 4 && offsetY > this.dialogHeight - 4) {
         this.stretchDirection = 'sw-resize'
       }
       // 右上
-      else if (offsetX > this.width - 4 && offsetY < 4) {
+      else if (offsetX > this.dialogWidth - 4 && offsetY < 4) {
         this.stretchDirection = 'ne-resize'
       }
       // 右下
-      else if (offsetX > this.width - 4 && offsetY > this.height - 4) {
+      else if (offsetX > this.dialogWidth - 4 && offsetY > this.dialogHeight - 4) {
         this.stretchDirection = 'nw-resize'
       }
     },
     // 处理缩放的方法 
-    beginResize(e) {
+    beginResize(params) {
       // 修改全局鼠标样式
       this.whichDirectionFlag = true
       this.$refs['my-dialog__resize__flag'].style.display = 'block'
       this.$refs['my-dialog__resize__flag'].style.cursor = this.stretchDirection
       this.$refs['my-dialog__resize__flag'].style.zIndex = 999
-
+      let wrapDiv = this.$refs["my-dialog__wrap"]
+      let dialogDiv = this.$refs["my-dialog"]
+      //鼠标点选移动时 禁止过度效果 否则效果表现为卡顿
+      wrapDiv.style.transitionProperty = 'none'
+      wrapDiv.style.transitionDuration = 'none'
       // 鼠标按下时的坐标
-      let defClientX = e.clientX, defClientY = e.clientY;
-      console.log(defClientX, defClientY);
+      let defClientX = params.clientX, defClientY = params.clientY;
       let removeHeight = 0, removeWidth = 0
-      document.documentElement.onmousemove = (e) => {
+      let wrapDivTop = parseInt(wrapDiv.style.top)
+      document.documentElement.onmousemove = (params2) => {
         // 鼠标走过按下到移动的距离
-        let { clientX, clientY } = e;
-        removeHeight += (clientY - defClientY)
-        removeWidth += (clientX - defClientX)
-        console.log(removeHeight, removeWidth);
-        // 鼠标所处窗口的位置
-        // 由于 offsetX, offsetY 基于的元素是 my-dialog__header 但移动的元素是 my-dialog__wrap ，需要减去 两个元素之间的top和left值差
-        // clientX -= 5, clientY -= 5
-        // 跟随鼠标移动
-        // this.$refs["my-dialog"].style.height = this.height + removeHeight + "px";
-        // this.$refs["my-dialog"].style.width = this.width + removeWidth + "px";
-
+        let { clientX, clientY } = params2;
+        removeHeight = (clientY - defClientY)
+        removeWidth = (clientX - defClientX)
+        // 上
         if (this.stretchDirection == 'n-resize') {
-          console.log('上');
-          this.$refs["my-dialog"].style.height = (this.height - removeHeight) + "px";
-
+          if (parseInt(wrapDiv.style.top) <= 0 && clientY <= 0) {
+            return wrapDiv.style.top = '0px'
+          } else if (clientY <= parseInt(dialogDiv.style.height)) {
+            dialogDiv.style.height = (this.dialogHeight - removeHeight) + "px";
+            wrapDiv.style.top = wrapDivTop + removeHeight + "px";
+          }
+        }
+        // 下
+        else if (this.stretchDirection == 's-resize') {
+          // console.log(parseInt(dialogDiv.style.height), parseInt(wrapDiv.style.top), window.innerHeight);
+          if (parseInt(dialogDiv.style.height) + parseInt(wrapDiv.style.top) >= window.innerHeight && clientY >= window.innerHeight) {
+            return dialogDiv.style.height = window.innerHeight - parseInt(dialogDiv.style.top) + 'px'
+          } else if ( clientY <= parseInt(dialogDiv.style.height)) {
+            dialogDiv.style.height = (this.dialogHeight + removeHeight) + "px";
+          }
         }
       };
-
       document.documentElement.onmouseup = () => {
         document.documentElement.onmousemove = null
+        this.dialogHeight = parseInt(this.$refs["my-dialog"].style.height)
         // 复原
         this.whichDirectionFlag = false
         this.$refs['my-dialog__resize__flag'].style.display = 'none'
         document.documentElement.style.cursor = 'default'
         this.$refs['my-dialog__resize__flag'].style.zIndex = -1
+        //鼠标松开时还原  否则点下后不再有过度效果
+        wrapDiv.style.transitionProperty = 'top , left'
+        wrapDiv.style.transitionDuration = '0.5 , 0.5'
       }
     }
   }
@@ -615,9 +648,11 @@ export default {
   }
   //dialog body 样式
   .my-dialog {
+    border: 1px solid #000;
     background-color: #fff;
-    border-radius: 0.2em;
     overflow: hidden;
+    min-height: 200px;
+    min-width: 200px;
     //阴影效果
     box-shadow: 0 2px 12px 0 rgba(12, 20, 23, 0.15);
     .my-dialog__header {
