@@ -24,6 +24,8 @@
       <transition name="my-dialog">
         <!-- dialog容器 -->
         <div
+          @mousemove="whichDirection"
+          @mousedown="beginResize"
           @click.stop
           class="my-dialog"
           ref="my-dialog"
@@ -34,7 +36,7 @@
             borderRadius: borderRadius + 'px',
             minHeight: '200px',
             minWidth: '200px',
-            flex: dynamicClass == 'my-dialog__shade__hidden' ? '1 0 ' + dialogWidth + 'px' : 'none'
+            cursor: stretchDirection
           }"
           v-show="visible"
         >
@@ -71,6 +73,13 @@
             <!-- 默认插槽 -->
             <slot></slot>
           </div>
+          <div
+            ref="my-dialog__resize"
+            class="my-dialog__resize"
+            :style="{
+              cursor: stretchDirection,
+            }"
+          ></div>
         </div>
       </transition>
     </div>
@@ -151,6 +160,7 @@ export default {
       showManager: false,
       managerData: Manager.managerData,
       toBeDeleted: Manager.toBeDeleted,
+      stretchDirection: '',
     };
   },
   mounted() {
@@ -379,6 +389,62 @@ export default {
       //   return dialogManager.style.display = "none";
       // }
     },
+    // 判断拉伸方向的方法  lt, t, rt, r, br, b, lb, l
+    whichDirection(params) {
+      this.$refs['my-dialog__resize'].style.zIndex = 7
+      // 当鼠标按下准备缩放时 取消鼠标图标样式监听监听事件
+      if (this.whichDirectionFlag) return
+
+      let { offsetX, offsetY } = params
+      // 上 
+      if (offsetX > 4 && offsetX < this.dialogWidth - 4 && offsetY < 4) {
+        this.stretchDirection = 'n-resize'
+      }
+      // 下
+      else if (offsetX > 4 && offsetX < this.dialogWidth - 4 && offsetY > this.dialogHeight - 4) {
+        this.stretchDirection = 's-resize'
+      }
+      // 左 
+      else if (offsetY > 4 && offsetY < this.dialogHeight - 4 && offsetX < 4) {
+        this.stretchDirection = 'e-resize'
+      }
+      // 右
+      else if (offsetY > 4 && offsetY < this.dialogHeight - 4 && offsetX > this.dialogWidth - 4) {
+        this.stretchDirection = 'w-resize'
+      }
+      // 左上
+      else if (offsetX < 4 && offsetY < 4) {
+        this.stretchDirection = 'se-resize'
+      }
+      // 左下
+      else if (offsetX < 4 && offsetY > this.dialogHeight - 4) {
+        this.stretchDirection = 'sw-resize'
+      }
+      // 右上
+      else if (offsetX > this.dialogWidth - 4 && offsetY < 4) {
+        this.stretchDirection = 'ne-resize'
+        console.log('右上');
+      }
+      // 右下
+      else if (offsetX > this.dialogWidth - 4 && offsetY > this.dialogHeight - 4) {
+        this.stretchDirection = 'nw-resize'
+        console.log('右下');
+      }
+      else {
+        this.stretchDirection = 'default'
+        this.$refs['my-dialog__resize'].style.zIndex = -1
+      }
+    },
+    // 处理缩放的方法 
+    beginResize(params) {
+      // 修改全局鼠标样式
+
+      document.documentElement.onmouseup = () => {
+        document.documentElement.onmousemove = null
+
+
+      }
+    },
     setDialogSize() {
       if (this.height) {
         this.dialogHeight = this.height
@@ -421,6 +487,9 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  .my-dialog__resize {
+    display: none;
+  }
 }
 //隐藏遮罩层样式
 .my-dialog__shade__hidden {
@@ -432,6 +501,12 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  .my-dialog__resize {
+    display: none;
+  }
+  .my-dialog {
+    position: fixed;
+  }
 }
 //可移动时样式
 .my-dialog__shift {
@@ -510,7 +585,6 @@ export default {
     box-shadow: 0 2px 12px 0 rgba(12, 20, 23, 0.15);
     .my-dialog__header {
       background-color: #ddd;
-      width: 100%;
       height: 30px;
       display: flex;
       justify-content: flex-end;
@@ -538,5 +612,33 @@ export default {
       cursor: default;
     }
   }
+}
+
+.my-dialog__resize1 {
+  width: calc(100% - 4px);
+  height: 4px;
+  position: absolute;
+  top: -2px;
+  left: 2px;
+  background-color: pink;
+  z-index: 9999;
+}
+.my-dialog__resize7 {
+  height: calc(100% - 4px);
+  width: 4px;
+  position: absolute;
+  left: -2px;
+  top: 2px;
+  background-color: pink;
+  z-index: 9999;
+}
+.my-dialog__resize {
+  height: 8px;
+  width: 8px;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  background-color: pink;
+  z-index: -1;
 }
 </style>

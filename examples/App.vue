@@ -22,7 +22,7 @@
         >shade shift height width shadow fullScreen minimality resetPostion appendToBody title touchDetection windowMonitor</div>
       </my-dialog>
       <my-dialog
-        title="asdfasdfsdfsadfsdfsa"
+        title="@@@"
         :width="300"
         :height="200"
         :visible.sync="visible2"
@@ -64,7 +64,7 @@
         >shade shift height width shadow fullScreen minimality resetPostion appendToBody title touchDetection windowMonitor</div>
       </my-dialog>
 
-      <div class="dome">
+      <div class="demo">
         <my-button disabled @click="visible = !visible" iconLeft="my-ui-x-iconfont icon-guding">禁用</my-button>
         <my-button type="text">
           <span class="my-ui-x-iconfont icon-guding">a</span>
@@ -84,7 +84,7 @@
         <my-button @click="visible7 = !visible7" iconLeft="my-ui-x-iconfont icon-guding">打开一个弹窗</my-button>
         <my-button @click="visible8 = !visible8" iconLeft="my-ui-x-iconfont icon-guding">打开一个弹窗</my-button>
       </div>
-      <div class="dome">
+      <div class="demo">
         <my-input disabled icon-right="my-ui-x-iconfont icon-guding"></my-input>
         <my-input v-model="value" type="password" iconRight="my-ui-x-iconfont icon-guding"></my-input>
         <my-input type="password" v-model="value" clearable iconLeft="my-ui-x-iconfont icon-guding"></my-input>
@@ -110,7 +110,7 @@
           iconRight="my-ui-x-iconfont icon-guding"
         ></my-input>
       </div>
-      <div class="dome">
+      <div class="demo">
         <my-radio label="1" v-model="gender">男</my-radio>
         <my-radio label="0" v-model="gender">女</my-radio>
         <my-radio-group v-model="gender">
@@ -118,11 +118,11 @@
           <my-radio label="0">女</my-radio>
         </my-radio-group>
       </div>
-      <div class="dome">
+      <div class="demo">
         <my-switch v-model="visible"></my-switch>
         <my-switch v-model="visible" active-color="pink" inactive-color="skyblue"></my-switch>
       </div>
-      <div class="dome">
+      <div class="demo">
         <my-checkbox v-model="visible3">选项一</my-checkbox>
         <my-checkbox v-model="visible1">选项二</my-checkbox>
         <my-checkbox v-model="visible2">选项三</my-checkbox>
@@ -132,6 +132,7 @@
           <my-checkbox label="选项三">选项三</my-checkbox>
         </my-checkbox-group>
       </div>
+      
     </div>
   </div>
 </template>
@@ -178,7 +179,7 @@ export default {
 .test {
   max-height: 100vh;
   overflow: auto;
-  /deep/ .dome {
+  /deep/ .demo {
     display: flex;
     flex-wrap: wrap;
     padding: 10px 10px 20px;
