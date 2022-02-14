@@ -10,7 +10,7 @@
         fullScreen
         minimality
         touchDetection
-        :borderRadius="4"
+        resizeModel
       >
         <div
           style="padding: 20px;"
@@ -21,14 +21,7 @@
           style="padding: 20px;"
         >shade shift height width shadow fullScreen minimality resetPostion appendToBody title touchDetection windowMonitor</div>
       </my-dialog>
-      <my-dialog
-        title="@@@"
-        :width="300"
-        :height="200"
-        :visible.sync="visible2"
-        shift
-        minimality
-      >
+      <my-dialog title="@@@" :width="300" :height="200" :visible.sync="visible2" shift minimality>
         <div
           style="padding: 20px;"
         >shade shift height width shadow fullScreen minimality resetPostion appendToBody title touchDetection windowMonitor</div>
@@ -132,7 +125,6 @@
           <my-checkbox label="选项三">选项三</my-checkbox>
         </my-checkbox-group>
       </div>
-      
     </div>
   </div>
 </template>

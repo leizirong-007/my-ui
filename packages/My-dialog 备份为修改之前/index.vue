@@ -24,8 +24,6 @@
       <transition name="my-dialog">
         <!-- dialog容器 -->
         <div
-          @mousemove="whichDirection"
-          @mousedown="beginResize"
           @click.stop
           class="my-dialog"
           ref="my-dialog"
@@ -33,11 +31,10 @@
           :style="{
             height: dialogHeight + 'px',
             width: dialogWidth + 'px',
-            border: resizeModel ? '2px solid #5c79aa52' : '',
+            borderRadius: borderRadius + 'px',
             minHeight: '200px',
             minWidth: '200px',
-            flex: dynamicClass == 'my-dialog__shade__hidden' ? '1 0 ' + dialogWidth + 'px' : 'none',
-            cursor: stretchDirection
+            flex: dynamicClass == 'my-dialog__shade__hidden' ? '1 0 ' + dialogWidth + 'px' : 'none'
           }"
           v-show="visible"
         >
@@ -45,12 +42,12 @@
           <Manager v-if="showManager" />
           <!-- 头容器 -->
           <div
-            @mousedown.stop="beginMoveDialog"
+            @mousedown="beginMoveDialog"
             @dblclick.self.stop="fullScreen ? isFullScreen = !isFullScreen : null"
             class="my-dialog__header"
             :style="{ cursor: shift ? 'move' : '' }"
           >
-            <span @mousedown.stop="toStratosphere" class="my-dialog__header__titile">{{ title }}</span>
+            <span @mousedown.stop class="my-dialog__header__titile">{{ title }}</span>
             <button
               class="my-ui-x-iconfont icon-zuixiaohua"
               @click.self="minimalityHandle"
@@ -142,10 +139,6 @@ export default {
     borderRadius: {
       type: Number,
       default: 2,
-    },
-    resizeModel: {
-      type: Boolean,
-      default: false
     }
   },
   data() {
@@ -158,7 +151,6 @@ export default {
       showManager: false,
       managerData: Manager.managerData,
       toBeDeleted: Manager.toBeDeleted,
-      stretchDirection: ''
     };
   },
   mounted() {
@@ -253,7 +245,6 @@ export default {
     },
     //弹窗移动的方法
     beginMoveDialog(params) {
-      this.toStratosphere()
       let wrapDiv = this.$refs['my-dialog__wrap']
       //鼠标点选移动时 禁止过度效果 否则效果表现为卡顿
       wrapDiv.style.transitionProperty = 'none'
@@ -261,22 +252,21 @@ export default {
       // 鼠标距离元素的上边距和左边距
       let { offsetX, offsetY } = params;
       //是否需要移动功能
-      if (!this.shift || this.isFullScreen) return
-
+      if (!this.shift || this.isFullScreen) {
+        return;
+      }
       document.documentElement.onmousemove = (params2) => {
         // 鼠标所处窗口的位置
         let { clientX, clientY } = params2;
         // 由于 offsetX, offsetY 基于的元素是 my-dialog__header 但移动的元素是 my-dialog__wrap ，需要减去 两个元素之间的top和left值差
         // clientX -= 5, clientY -= 5
         // 跟随鼠标移动
-        let resizeModelBorder = 0
-        if (this.resizeModel) resizeModelBorder = 2
-
         wrapDiv.style.position = "fixed";
-        wrapDiv.style.left = clientX - offsetX - resizeModelBorder + "px";
-        wrapDiv.style.top = clientY - offsetY - resizeModelBorder + "px";
-        if (this.touchDetection) this.collisionDetection(wrapDiv)
-
+        wrapDiv.style.left = clientX - offsetX + "px";
+        wrapDiv.style.top = clientY - offsetY + "px";
+        if (this.touchDetection) {
+          this.collisionDetection(wrapDiv)
+        }
       };
       //添加鼠标松开监听
       document.documentElement.onmouseup = () => {
@@ -287,23 +277,18 @@ export default {
       };
     },
     //是否添加防碰撞
-    collisionDetection(wrapDialogBox) {
-      let dialogBox = this.$refs['my-dialog']
-      let dialogBoxWidth = parseInt(dialogBox.style.width)
-      let dialogBoxHeight = parseInt(dialogBox.style.height)
-      if (parseInt(wrapDialogBox.style.left) <= 0) {
-        wrapDialogBox.style.left = '0px'
+    collisionDetection(wrapDiv) {
+      if (parseInt(wrapDiv.style.left) <= 0) {
+        wrapDiv.style.left = '0px'
       }
-      if (parseInt(wrapDialogBox.style.top) <= 0) {
-        wrapDialogBox.style.top = '0px'
+      if (parseInt(wrapDiv.style.top) <= 0) {
+        wrapDiv.style.top = '0px'
       }
-      let resizeModelBorder = 0
-      if (this.resizeModel) resizeModelBorder = 4
-      if (parseInt(wrapDialogBox.style.left) >= (window.innerWidth - dialogBoxWidth)) {
-        wrapDialogBox.style.left = window.innerWidth - dialogBoxWidth - resizeModelBorder + "px";
+      if (parseInt(wrapDiv.style.left) >= (window.innerWidth - this.dialogWidth)) {
+        wrapDiv.style.left = window.innerWidth - this.dialogWidth + "px";
       }
-      if (parseInt(wrapDialogBox.style.top) >= window.innerHeight - dialogBoxHeight) {
-        wrapDialogBox.style.top = window.innerHeight - dialogBoxHeight - resizeModelBorder + "px";
+      if (parseInt(wrapDiv.style.top) >= window.innerHeight - this.dialogHeight) {
+        wrapDiv.style.top = window.innerHeight - this.dialogHeight + "px";
       }
     },
     //监听窗口缩放时自动更改位置
@@ -401,101 +386,6 @@ export default {
       if (this.width) {
         this.dialogWidth = this.width
       }
-    },
-    // 判断要拉伸的方向
-    whichDirection(params) {
-      if (!this.resizeModel || !this.shift || this.isFullScreen) return this.stretchDirection = 'default'
-      // 当鼠标按下准备缩放时 取消鼠标图标样式监听监听事件
-      let { offsetX, offsetY } = params
-      // 上 
-      if (offsetX > 4 && offsetX < this.dialogWidth - 4 && offsetY < 4) {
-        this.stretchDirection = 'n-resize'
-      }
-      // 下
-      else if (offsetX > 4 && offsetX < this.dialogWidth - 4 && offsetY > this.dialogHeight - 4) {
-        this.stretchDirection = 's-resize'
-      }
-      // 左 
-      else if (offsetY > 4 && offsetY < this.dialogHeight - 4 && offsetX < 4) {
-        this.stretchDirection = 'e-resize'
-      }
-      // 右
-      else if (offsetY > 4 && offsetY < this.dialogHeight - 4 && offsetX > this.dialogWidth - 4) {
-        this.stretchDirection = 'w-resize'
-      }
-      // 左上
-      else if (offsetX < 4 && offsetY < 4) {
-        this.stretchDirection = 'se-resize'
-      }
-      // 左下
-      else if (offsetX < 4 && offsetY > this.dialogHeight - 4) {
-        this.stretchDirection = 'sw-resize'
-      }
-      // 右上
-      else if (offsetX > this.dialogWidth - 4 && offsetY < 4) {
-        this.stretchDirection = 'ne-resize'
-        console.log('右上');
-      }
-      // 右下
-      else if (offsetX > this.dialogWidth - 4 && offsetY > this.dialogHeight - 4) {
-        this.stretchDirection = 'nw-resize'
-        console.log('右下');
-      }
-      else {
-        this.stretchDirection = 'default'
-      }
-    },
-    beginResize(params) {
-      let { offsetX, offsetY } = params
-      let direction = this.stretchDirection
-      let wrapDialogBox = this.$refs['my-dialog__wrap']
-      let dialogBox = this.$refs['my-dialog']
-      let defClientX = 0, defClientY = 0
-      let distanceX = 0, distanceY = 0
-      let wrapDialogBoxLeft = parseInt(wrapDialogBox.style.left)
-      let wrapDialogBoxTop = parseInt(wrapDialogBox.style.top)
-      let dialogBoxWidth = parseInt(dialogBox.style.width)
-      let dialogBoxHeight = parseInt(dialogBox.style.height)
-      let dialogBoxMinWidth = parseInt(dialogBox.style.minWidth)
-      let dialogBoxMinHeight = parseInt(dialogBox.style.minHeight)
-      let screenW = window.innerWidth
-      let screenH = window.innerHeight
-      let x = screenH - dialogBoxHeight - wrapDialogBoxTop
-      wrapDialogBox.style.transitionProperty = 'none'
-
-      document.documentElement.onmousemove = (params2) => {
-        let { clientX, clientY } = params2
-        // console.log(params2);
-        // console.log(dialogBoxMinWidth, dialogBoxMinHeight);
-        // console.log(clientX, clientY);
-
-        // console.log(screenW, screenH); || 
-        console.log(screenH - dialogBoxMinHeight - clientY <= x);
-        if (direction == 'n-resize') {
-          if (clientY <= 0) {
-            wrapDialogBox.style.top = 0 + 'px'
-            dialogBox.style.height = dialogBoxHeight + wrapDialogBoxTop + 'px'
-            return
-          } else {
-            if (screenH - dialogBoxMinHeight - clientY <= x) {
-              return
-            }
-            wrapDialogBox.style.top = clientY + 'px'
-            dialogBox.style.height = wrapDialogBoxTop + dialogBoxHeight - clientY + 'px'
-          }
-        }
-
-
-
-
-
-
-        document.documentElement.onmouseup = () => {
-          document.documentElement.onmousemove = null
-          wrapDialogBox.style.transitionProperty = 'left top'
-        }
-      }
-
     }
   }
 }
@@ -613,24 +503,21 @@ export default {
     animation: dialogAnimationInside 0.3s reverse;
   }
   //dialog body 样式
-
   .my-dialog {
-    box-sizing: content-box;
     background-color: #fff;
     position: relative;
     //阴影效果
     box-shadow: 0 2px 12px 0 rgba(12, 20, 23, 0.15);
-    border-radius: 2px;
-    overflow: hidden;
     .my-dialog__header {
-      background-color: #5c79aa52;
-      border-bottom: 1px solid #ddd;
+      background-color: #ddd;
       width: 100%;
       height: 30px;
       display: flex;
       justify-content: flex-end;
       align-items: center;
       position: relative;
+      border-top-left-radius: inherit;
+      border-top-right-radius: inherit;
       > * {
         margin-left: 15px;
         background-color: transparent;
