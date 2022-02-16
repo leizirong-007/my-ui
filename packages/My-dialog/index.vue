@@ -36,6 +36,8 @@
             border: resizeModel ? '2px solid #5c79aa52' : '',
             minHeight: '200px',
             minWidth: '200px',
+            maxHeight: '100vh',
+            maxWidth: '100vw',
             flex: dynamicClass == 'my-dialog__shade__hidden' ? '1 0 ' + dialogWidth + 'px' : 'none',
             cursor: stretchDirection
           }"
